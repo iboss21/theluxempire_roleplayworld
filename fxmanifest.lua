@@ -1,17 +1,19 @@
+
 fx_version 'cerulean'
 game 'gta5'
 
 author 'iBoss21'
-description 'TheLuxEmpire Roleplay World - Advanced Resource Gathering and Crafting'
-version '1.0.0'
+description 'TheLuxEmpire Roleplay World - Expanded Roleplay Experience'
+version '2.0.0'
 
 shared_scripts {
     '@qb-core/shared/locale.lua',
-    'locales/en.lua', -- Add more locales as needed
+    'shared/locales/en.lua',
+    'shared/locales/ge.lua',
+    'shared/locales/es.lua',
     'shared/config.lua',
     'shared/utils.lua',
-    '@theluxempire-core/shared/functions.lua',
-    '@theluxempire-lib/shared/functions.lua',
+    'shared/functions.lua',
     '@qb-target/shared/init.lua',
     '@tgiann-inventory/shared/config.lua'
 }
@@ -24,6 +26,7 @@ client_scripts {
     'client/skills.lua',
     'client/events.lua',
     'client/npc.lua',
+    'client/cargo.lua',
     '@qb-target/client/init.lua',
     '@tgiann-inventory/client/main.lua'
 }
@@ -37,6 +40,7 @@ server_scripts {
     'server/skills.lua',
     'server/events.lua',
     'server/commands.lua',
+    'server/cargo.lua',
     '@tgiann-inventory/server/main.lua'
 }
 

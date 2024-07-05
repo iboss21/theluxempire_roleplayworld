@@ -1,77 +1,53 @@
+
+-- Main client script for TheLuxEmpire Roleplay World
+
 local QBCore = exports['qb-core']:GetCoreObject()
-local TLE = exports['theluxempire-core']:GetObject()
-local TLELib = exports['theluxempire-lib']:GetObject()
+local TargetSystem
+local InventorySystem
 
-local isLoggedIn = false
-local PlayerData = {}
-local currentActivity = nil
-
--- Functions
-local function InitializePlayer()
-    PlayerData = QBCore.Functions.GetPlayerData()
-    TriggerServerEvent('theluxempire_roleplayworld:server:SyncPlayerData')
+if Config.TargetSystem == 'qb-target' then
+    TargetSystem = exports['qb-target']:GetTarget()
+elseif Config.TargetSystem == 'other-target-system' then
+    TargetSystem = exports['other-target-system']:GetTarget()
 end
 
-local function UpdatePlayerData(key, value)
-    PlayerData[key] = value
+if Config.InventorySystem == 'tgiann-inventory' then
+    InventorySystem = exports['tgiann-inventory']:GetInventory()
+elseif Config.InventorySystem == 'other-inventory-system' then
+    InventorySystem = exports['other-inventory-system']:GetInventory()
 end
 
--- Events
-RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
-    isLoggedIn = true
-    InitializePlayer()
-end)
+local locales = QBCore.Shared._L
 
-RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
-    isLoggedIn = false
-    PlayerData = {}
-    currentActivity = nil
-end)
-
-RegisterNetEvent('QBCore:Player:SetPlayerData', function(data)
-    PlayerData = data
-end)
-
-RegisterNetEvent('theluxempire_roleplayworld:client:SyncPlayerData', function(data)
-    for key, value in pairs(data) do
-        UpdatePlayerData(key, value)
-    end
-end)
-
--- Main thread
 CreateThread(function()
-    while true do
-        if isLoggedIn then
-            local playerPed = PlayerPedId()
-            local playerCoords = GetEntityCoords(playerPed)
-
-            for activityType, activityData in pairs(Config.Activities) do
-                if activityData.enabled then
-                    for _, location in ipairs(activityData.locations) do
-                        local distance = #(playerCoords - location.coords)
-                        if distance < location.radius then
-                            if currentActivity ~= activityType then
-                                currentActivity = activityType
-                                TriggerEvent('theluxempire_roleplayworld:client:EnteredActivityZone', activityType, location)
-                            end
-                            break
-                        elseif currentActivity == activityType then
-                            currentActivity = nil
-                            TriggerEvent('theluxempire_roleplayworld:client:LeftActivityZone', activityType)
-                        end
-                    end
-                end
-            end
-        end
-        Wait(1000)
+    local npc = GetHashKey('mp_m_shopkeep_01')
+    RequestModel(npc)
+    while not HasModelLoaded(npc) do
+        Wait(1)
     end
+
+    local npcEntity = CreatePed(4, npc, -47.26, -1758.93, 29.42, 45.0, false, true)
+    FreezeEntityPosition(npcEntity, true)
+    SetEntityInvincible(npcEntity, true)
+    SetBlockingOfNonTemporaryEvents(npcEntity, true)
+
+    TargetSystem:AddTargetEntity(npcEntity, {
+        options = {
+            {
+                type = "client",
+                event = "client:openShop",
+                icon = "fas fa-shopping-basket",
+                label = locales('shop_open'),
+            },
+        },
+        distance = 2.5
+    })
 end)
 
--- Exports
-exports('GetPlayerData', function()
-    return PlayerData
-end)
-
-exports('GetCurrentActivity', function()
-    return currentActivity
+RegisterNetEvent('client:openShop', function()
+    local shopItems = {
+        { name = "bread", price = 5 },
+        { name = "water", price = 2 }
+    }
+    InventorySystem:OpenInventory('shop', shopItems)
 end)
