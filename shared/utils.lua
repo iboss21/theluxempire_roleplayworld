@@ -9,8 +9,6 @@ function Utils.GetCurrentTime()
 end
 
 function Utils.CalculateDistance(coords1, coords2)
-    return #(
-function Utils.CalculateDistance(coords1, coords2)
     return #(vector3(coords1.x, coords1.y, coords1.z) - vector3(coords2.x, coords2.y, coords2.z))
 end
 
