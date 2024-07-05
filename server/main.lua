@@ -2,6 +2,22 @@ local QBCore = exports['qb-core']:GetCoreObject()
 local TLE = exports['theluxempire-core']:GetObject()
 local TLELib = exports['theluxempire-lib']:GetObject()
 
+-- Initialize tgiann-inventory
+local TGIANNInventory = exports['tgiann-inventory']:GetInventory()
+
+-- Example: Handling a shop purchase
+RegisterNetEvent('server:buyItem', function(playerId, itemName, quantity)
+    local xPlayer = QBCore.Functions.GetPlayer(playerId)
+    local itemPrice = GetItemPrice(itemName) -- Assume a function to get item price
+
+    if xPlayer.Functions.RemoveMoney('cash', itemPrice * quantity) then
+        TGIANNInventory:AddItem(playerId, itemName, quantity)
+        TriggerClientEvent('QBCore:Notify', playerId, "Purchase successful!", "success")
+    else
+        TriggerClientEvent('QBCore:Notify', playerId, "Not enough money", "error")
+    end
+end)
+
 -- Server-side variables
 local PlayerData = {}
 
@@ -42,6 +58,15 @@ local function SavePlayerData(source)
         json.encode(PlayerData[source]),
         citizenid
     })
+end
+
+-- Function to get item price (placeholder)
+function GetItemPrice(itemName)
+    local prices = {
+        bread = 5,
+        water = 2
+    }
+    return prices[itemName] or 0
 end
 
 -- Events
