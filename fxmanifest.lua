@@ -11,7 +11,9 @@ shared_scripts {
     'shared/config.lua',
     'shared/utils.lua',
     '@theluxempire-core/shared/functions.lua',
-    '@theluxempire-lib/shared/functions.lua'
+    '@theluxempire-lib/shared/functions.lua',
+    '@qb-target/shared/init.lua',
+    '@tgiann-inventory/shared/config.lua'
 }
 
 client_scripts {
@@ -21,7 +23,9 @@ client_scripts {
     'client/market.lua',
     'client/skills.lua',
     'client/events.lua',
-    'client/npc.lua'
+    'client/npc.lua',
+    '@qb-target/client/init.lua',
+    '@tgiann-inventory/client/main.lua'
 }
 
 server_scripts {
@@ -32,14 +36,17 @@ server_scripts {
     'server/market.lua',
     'server/skills.lua',
     'server/events.lua',
-    'server/commands.lua'
+    'server/commands.lua',
+    '@tgiann-inventory/server/main.lua'
 }
 
 dependencies {
     'qb-core',
     'oxmysql',
     'theluxempire-core',
-    'theluxempire-lib'
+    'theluxempire-lib',
+    'qb-target',
+    'tgiann-inventory'
 }
 
 lua54 'yes'
